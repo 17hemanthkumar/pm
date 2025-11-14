@@ -92,15 +92,16 @@
                 </div>
             </div>
             <div class="relative">
-                <div class="relative rounded-xl overflow-hidden shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1180&q=80" 
-                         alt="People at a concert enjoying music" 
-                         class="w-full h-auto">
+                <div class="relative rounded-xl overflow-hidden shadow-2xl h-[400px]">
+                    <img id="heroEventImage" 
+                         src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1180&q=80" 
+                         alt="Event photo" 
+                         class="w-full h-full object-cover transition-opacity duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 text-white">
-                        <p class="text-sm font-medium">Music Festival 2023</p>
-                        <h3 class="text-xl font-bold">Summer Beats</h3>
-                        <p class="text-sm">1,245 photos available</p>
+                        <p id="heroEventCategory" class="text-sm font-medium">Music Festival 2023</p>
+                        <h3 id="heroEventName" class="text-xl font-bold">Summer Beats</h3>
+                        <p id="heroEventPhotos" class="text-sm">1,245 photos available</p>
                     </div>
                 </div>
                 <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-indigo-100 rounded-full -z-10"></div>
@@ -169,87 +170,6 @@
     </div>
 </section>
 
-
-    <!-- Testimonials Section -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-indigo-50 rounded-2xl">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">What People Are Saying</h2>
-            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                Don't just take our word for it - hear from our users
-            </p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Testimonial 1 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm">
-                <div class="flex items-center mb-4">
-                    <img src="https://randomuser.me/api/portraits/women/32.jpg" 
-                         alt="Sarah Johnson" 
-                         class="w-12 h-12 rounded-full object-cover mr-4">
-                    <div>
-                        <h4 class="font-semibold text-gray-900">Sarah Johnson</h4>
-                        <p class="text-sm text-gray-600">Music Festival Attendee</p>
-                    </div>
-                </div>
-                <p class="text-gray-700">
-                    "I went to a 3-day festival and found 58 photos of myself I never knew existed! PicMe saved me hours of scrolling through thousands of photos."
-                </p>
-                <div class="mt-4 flex text-yellow-400">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-            </div>
-            
-            <!-- Testimonial 2 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm">
-                <div class="flex items-center mb-4">
-                    <img src="https://randomuser.me/api/portraits/men/45.jpg" 
-                         alt="Michael Chen" 
-                         class="w-12 h-12 rounded-full object-cover mr-4">
-                    <div>
-                        <h4 class="font-semibold text-gray-900">Michael Chen</h4>
-                        <p class="text-sm text-gray-600">Conference Speaker</p>
-                    </div>
-                </div>
-                <p class="text-gray-700">
-                    "As a speaker at multiple events, I need professional photos for my portfolio. PicMe finds all the best shots from different photographers in one place."
-                </p>
-                <div class="mt-4 flex text-yellow-400">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-            </div>
-            
-            <!-- Testimonial 3 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm">
-                <div class="flex items-center mb-4">
-                    <img src="https://randomuser.me/api/portraits/women/68.jpg" 
-                         alt="Emily Rodriguez" 
-                         class="w-12 h-12 rounded-full object-cover mr-4">
-                    <div>
-                        <h4 class="font-semibold text-gray-900">Emily Rodriguez</h4>
-                        <p class="text-sm text-gray-600">Wedding Guest</p>
-                    </div>
-                </div>
-                <p class="text-gray-700">
-                    "At my best friend's wedding, I was too busy having fun to pose for photos. PicMe found all the candid moments I would have missed otherwise!"
-                </p>
-                <div class="mt-4 flex text-yellow-400">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- CTA Section -->
     <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -332,63 +252,149 @@
     </footer>
 
     <script>
-       async function loadFeaturedEvents() {
-    try {
-        // Add cache-busting timestamp to force fresh data
-        const response = await fetch(`/api/events?t=${Date.now()}`);
-        if (!response.ok) throw new Error('Failed to fetch events');
-        
-        const events = await response.json();
-        
-        // Sort by creation date (most recent first) and take top 3
-        const recentEvents = events
-            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-            .slice(0, 3);
-        
-        const container = document.getElementById('featuredEventsContainer');
-        
-        if (recentEvents.length === 0) {
-            container.innerHTML = '<div class="col-span-3 text-center text-gray-500">No events available yet.</div>';
-            return;
+        // Hero Carousel State
+        let heroEvents = [];
+        let currentHeroIndex = 0;
+        let heroInterval = null;
+
+        // Load hero carousel events
+        async function loadHeroEvents() {
+            try {
+                const response = await fetch(`/api/events?t=${Date.now()}`);
+                if (!response.ok) throw new Error('Failed to fetch events');
+                
+                const events = await response.json();
+                
+                // Filter events with valid images and sort by creation date
+                heroEvents = events
+                    .filter(event => event.cover_thumbnail || event.image)
+                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .slice(0, 10); // Limit to 10 events
+                
+                if (heroEvents.length > 0) {
+                    updateHeroImage(0);
+                    
+                    // Only start rotation if there are multiple events
+                    if (heroEvents.length > 1) {
+                        startHeroRotation();
+                    }
+                } else {
+                    // Keep default image if no events available
+                    console.log('No events with images available, using default hero image');
+                }
+                
+            } catch (error) {
+                console.error('Error loading hero events:', error);
+                // Keep default image on error
+            }
         }
-        
-        // Generate HTML for each event
-        container.innerHTML = recentEvents.map(event => `
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <img src="${event.cover_thumbnail || '/static/images/default_event_thumbnail.jpg'}" 
-                     alt="${event.name}" 
-                     class="w-full h-48 object-cover">
-                <div class="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-sm font-semibold">
-                    ${event.photos_count || 0} photos
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold mb-2">${event.name}</h3>
-                    <p class="text-gray-600 mb-4">${event.category || 'General'}</p>
-                    <p class="text-sm text-gray-500 mb-4">
-                        ${new Date(event.date).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                        })} • ${event.location}
-                    </p>
-                    <a href="/event_detail?event_id=${event.id}" 
-                       class="text-blue-600 hover:text-blue-800 font-semibold">
-                        View Photos →
-                    </a>
-                </div>
-            </div>
-        `).join('');
-        
-    } catch (error) {
-        console.error('Error loading featured events:', error);
-        document.getElementById('featuredEventsContainer').innerHTML = 
-            '<div class="col-span-3 text-center text-red-500">Failed to load events. Please try again later.</div>';
-    }
-}
 
-// Load events when page loads
-document.addEventListener('DOMContentLoaded', loadFeaturedEvents);
+        // Update hero image and metadata
+        function updateHeroImage(index) {
+            if (heroEvents.length === 0) return;
+            
+            const event = heroEvents[index];
+            const heroImage = document.getElementById('heroEventImage');
+            const heroCategory = document.getElementById('heroEventCategory');
+            const heroName = document.getElementById('heroEventName');
+            const heroPhotos = document.getElementById('heroEventPhotos');
+            
+            // Fade out
+            heroImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                // Update content
+                heroImage.src = event.cover_thumbnail || event.image || '/static/images/default_event_thumbnail.jpg';
+                heroImage.alt = event.name;
+                heroCategory.textContent = event.category || 'Event';
+                heroName.textContent = event.name;
+                heroPhotos.textContent = `${event.photos_count || 0} photos available`;
+                
+                // Fade in
+                heroImage.style.opacity = '1';
+            }, 250);
+            
+            currentHeroIndex = index;
+        }
 
+        // Start auto-rotation
+        function startHeroRotation() {
+            if (heroInterval) {
+                clearInterval(heroInterval);
+            }
+            
+            heroInterval = setInterval(() => {
+                const nextIndex = (currentHeroIndex + 1) % heroEvents.length;
+                updateHeroImage(nextIndex);
+            }, 5000); // Rotate every 5 seconds
+        }
+
+        // Load featured events for the Featured Events section
+        async function loadFeaturedEvents() {
+            try {
+                const response = await fetch(`/api/events?t=${Date.now()}`);
+                if (!response.ok) throw new Error('Failed to fetch events');
+                
+                const events = await response.json();
+                
+                // Sort by creation date (most recent first) and take top 3
+                const recentEvents = events
+                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .slice(0, 3);
+                
+                const container = document.getElementById('featuredEventsContainer');
+                
+                if (recentEvents.length === 0) {
+                    container.innerHTML = '<div class="col-span-3 text-center text-gray-500">No events available yet.</div>';
+                    return;
+                }
+                
+                // Generate HTML for each event
+                container.innerHTML = recentEvents.map(event => `
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                        <img src="${event.cover_thumbnail || '/static/images/default_event_thumbnail.jpg'}" 
+                             alt="${event.name}" 
+                             class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-sm font-semibold">
+                            ${event.photos_count || 0} photos
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">${event.name}</h3>
+                            <p class="text-gray-600 mb-4">${event.category || 'General'}</p>
+                            <p class="text-sm text-gray-500 mb-4">
+                                ${new Date(event.date).toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric' 
+                                })} • ${event.location}
+                            </p>
+                            <a href="/event_detail?event_id=${event.id}" 
+                               class="text-blue-600 hover:text-blue-800 font-semibold">
+                                View Photos →
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading featured events:', error);
+                document.getElementById('featuredEventsContainer').innerHTML = 
+                    '<div class="col-span-3 text-center text-red-500">Failed to load events. Please try again later.</div>';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeroEvents();
+            loadFeaturedEvents();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (heroInterval) {
+                clearInterval(heroInterval);
+            }
+        });
     </script>
 </body>
 </html>
