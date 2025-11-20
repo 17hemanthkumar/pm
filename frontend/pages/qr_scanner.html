@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Event QR Code - PicMe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/homepage" class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-indigo-600" viewBox="0 0 32 32" fill="currentColor"><path d="M16 2L20 10H28L22 16L24 24L16 20L8 24L10 16L4 10H12L16 2Z"/><circle cx="16" cy="16" r="6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                    <span class="text-xl font-bold text-indigo-600">PicMe</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="/homepage" class="text-gray-600 hover:text-indigo-600">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-12 pb-12 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Scan Event QR Code</h1>
+            <p id="event-name-display" class="text-lg text-gray-600">Scan the event QR code to unlock event-specific reviews</p>
+            <p id="event-warning" class="text-sm text-orange-600 mt-2 font-semibold hidden">⚠️ Only the QR code for this specific event will be accepted</p>
+        </div>
+
+        <!-- QR Scanner -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <!-- Tab Navigation -->
+            <div class="flex border-b border-gray-200 mb-6">
+                <button id="tab-camera" class="flex-1 py-3 px-4 text-center font-semibold border-b-2 border-indigo-600 text-indigo-600">
+                    📷 Scan with Camera
+                </button>
+                <button id="tab-upload" class="flex-1 py-3 px-4 text-center font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                    📤 Upload QR Image
+                </button>
+            </div>
+
+            <!-- Camera Scanner Tab -->
+            <div id="camera-tab-content">
+                <div id="qr-reader" class="w-full max-w-md mx-auto"></div>
+                <div id="qr-status" class="mt-4 text-center text-gray-600"></div>
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="upload-tab-content" class="hidden">
+                <div id="qr-reader-upload" class="hidden"></div>
+                <div class="max-w-md mx-auto">
+                    <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition-colors cursor-pointer">
+                        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <p class="text-gray-600 mb-4">Click to upload or drag and drop</p>
+                        <input type="file" id="qr-file-input" accept="image/*" class="hidden">
+                        <button id="upload-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                            Choose QR Code Image
+                        </button>
+                    </div>
+                    
+                    <!-- Preview -->
+                    <div id="upload-preview" class="mt-6 hidden">
+                        <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                        <img id="preview-image" src="" class="w-full max-w-xs mx-auto rounded-lg border border-gray-300">
+                        <div id="upload-status" class="mt-4 text-center text-gray-600"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="success-message" class="hidden bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+            <svg class="w-16 h-16 text-green-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h2 class="text-2xl font-bold text-green-900 mb-2">QR Code Scanned Successfully!</h2>
+            <p class="text-green-700 mb-4">You can now write a review for this event.</p>
+            <a id="review-event-link" href="#" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                Write Event Review
+            </a>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="hidden bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <svg class="w-16 h-16 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h2 class="text-2xl font-bold text-red-900 mb-2">Scan Failed</h2>
+            <p id="error-text" class="text-red-700 mb-4"></p>
+            <button id="retry-btn" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                Try Again
+            </button>
+        </div>
+
+        <!-- Manual Entry (for testing) -->
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mt-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Manual Entry (Testing)</h3>
+            <div class="flex gap-2">
+                <input type="text" id="manual-event-id" placeholder="Enter event ID" 
+                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button id="manual-submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let html5QrCode;
+        let isScanning = false;
+        
+        // Get expected event_id from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const expectedEventId = urlParams.get('event_id');
+        
+        // Load event details if event_id is provided
+        if (expectedEventId) {
+            document.getElementById('event-warning').classList.remove('hidden');
+            loadEventDetails(expectedEventId);
+        }
+        
+        async function loadEventDetails(eventId) {
+            try {
+                const response = await fetch(`/api/events/${eventId}`);
+                const data = await response.json();
+                if (data.success && data.event) {
+                    document.getElementById('event-name-display').innerHTML = 
+                        `Scan QR code for: <strong class="text-indigo-600">${data.event.name}</strong>`;
+                }
+            } catch (error) {
+                console.error('Error loading event details:', error);
+            }
+        }
+
+        // Tab switching
+        const tabCamera = document.getElementById('tab-camera');
+        const tabUpload = document.getElementById('tab-upload');
+        const cameraContent = document.getElementById('camera-tab-content');
+        const uploadContent = document.getElementById('upload-tab-content');
+
+        tabCamera.addEventListener('click', () => {
+            // Switch to camera tab
+            tabCamera.classList.add('border-indigo-600', 'text-indigo-600');
+            tabCamera.classList.remove('border-transparent', 'text-gray-500');
+            tabUpload.classList.remove('border-indigo-600', 'text-indigo-600');
+            tabUpload.classList.add('border-transparent', 'text-gray-500');
+            
+            cameraContent.classList.remove('hidden');
+            uploadContent.classList.add('hidden');
+            
+            // Restart scanner if not running
+            if (!isScanning) {
+                initScanner();
+            }
+        });
+
+        tabUpload.addEventListener('click', () => {
+            // Switch to upload tab
+            tabUpload.classList.add('border-indigo-600', 'text-indigo-600');
+            tabUpload.classList.remove('border-transparent', 'text-gray-500');
+            tabCamera.classList.remove('border-indigo-600', 'text-indigo-600');
+            tabCamera.classList.add('border-transparent', 'text-gray-500');
+            
+            uploadContent.classList.remove('hidden');
+            cameraContent.classList.add('hidden');
+            
+            // Stop camera scanner
+            if (isScanning && html5QrCode) {
+                html5QrCode.stop();
+                isScanning = false;
+            }
+        });
+
+        // Upload QR Code Image
+        const uploadBtn = document.getElementById('upload-btn');
+        const fileInput = document.getElementById('qr-file-input');
+        const uploadPreview = document.getElementById('upload-preview');
+        const previewImage = document.getElementById('preview-image');
+        const uploadStatus = document.getElementById('upload-status');
+
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                previewImage.src = event.target.result;
+                uploadPreview.classList.remove('hidden');
+                uploadStatus.innerHTML = '<span class="text-blue-600">Processing QR code...</span>';
+
+                // Scan QR code from uploaded image
+                try {
+                    // Create a temporary scanner for file upload
+                    const html5QrCodeScanner = new Html5Qrcode("qr-reader-upload");
+                    
+                    const result = await html5QrCodeScanner.scanFile(file, true);
+                    
+                    // Extract event_id from QR code using the same function
+                    const eventId = extractEventId(result);
+                    
+                    // Validate event_id if expected event is specified
+                    if (expectedEventId && eventId !== expectedEventId) {
+                        uploadStatus.innerHTML = '<span class="text-red-600">❌ Wrong QR code! This QR code is for a different event. Please upload the correct event\'s QR code.</span>';
+                        return;
+                    }
+                    
+                    uploadStatus.innerHTML = '<span class="text-green-600">QR code detected! Processing...</span>';
+                    await recordEventAttendance(eventId);
+                    
+                } catch (error) {
+                    console.error('Error scanning uploaded QR code:', error);
+                    uploadStatus.innerHTML = '<span class="text-red-600">Could not read QR code from image. Please try another image or use camera scan.</span>';
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Drag and drop support
+        const dropZone = document.getElementById('drop-zone');
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                // Create a new DataTransfer object and add the file
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Initialize QR Scanner
+        function initScanner() {
+            html5QrCode = new Html5Qrcode("qr-reader");
+            
+            const config = { 
+                fps: 10, 
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            };
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                console.error("Unable to start scanning", err);
+                document.getElementById('qr-status').innerHTML = 
+                    '<span class="text-red-600">Camera access denied. Please use the upload tab or manual entry.</span>';
+            });
+            
+            isScanning = true;
+            document.getElementById('qr-status').textContent = 'Position QR code within the frame...';
+        }
+
+        // Extract event_id from various QR code formats
+        function extractEventId(qrData) {
+            console.log('QR Data:', qrData);
+            
+            // Format 1: Full URL - http://127.0.0.1:5000/event_detail?event_id=event_12345678
+            if (qrData.includes('event_id=')) {
+                const match = qrData.match(/event_id=([^&\s]+)/);
+                if (match) {
+                    console.log('Extracted from URL:', match[1]);
+                    return match[1];
+                }
+            }
+            
+            // Format 2: With prefix - event_id:event_12345678
+            if (qrData.includes(':')) {
+                const parts = qrData.split(':');
+                console.log('Extracted from prefix:', parts[1]);
+                return parts[1];
+            }
+            
+            // Format 3: Direct event_id - event_12345678
+            console.log('Direct event_id:', qrData);
+            return qrData;
+        }
+
+        // Handle successful scan
+        async function onScanSuccess(decodedText, decodedResult) {
+            if (!isScanning) return;
+            
+            isScanning = false;
+            html5QrCode.stop();
+            
+            document.getElementById('qr-status').innerHTML = 
+                '<span class="text-blue-600">Processing QR code...</span>';
+            
+            // Extract event_id from QR code
+            const eventId = extractEventId(decodedText);
+            
+            // Validate event_id if expected event is specified
+            if (expectedEventId && eventId !== expectedEventId) {
+                showError(`Wrong QR code! This QR code is for a different event. Please scan the correct event's QR code.`);
+                return;
+            }
+            
+            await recordEventAttendance(eventId);
+        }
+
+        function onScanFailure(error) {
+            // Ignore scan failures (happens continuously while scanning)
+        }
+
+        // Record event attendance via API
+        async function recordEventAttendance(eventId) {
+            try {
+                const response = await fetch('/api/scan-event-qr', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event_id: eventId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Hide scanner sections
+                    document.querySelector('.bg-white.rounded-lg.shadow-lg').style.display = 'none';
+                    document.querySelector('.bg-gray-50.border').style.display = 'none';
+                    
+                    // Show success message
+                    document.getElementById('success-message').classList.remove('hidden');
+                    document.getElementById('review-event-link').href = `/event_detail?event_id=${eventId}`;
+                } else {
+                    showError(data.error || 'Failed to record attendance');
+                }
+            } catch (error) {
+                console.error('Error recording attendance:', error);
+                showError('Network error. Please try again.');
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            document.querySelector('.bg-white.rounded-lg.shadow-lg').style.display = 'none';
+            document.getElementById('error-message').classList.remove('hidden');
+            document.getElementById('error-text').textContent = message;
+        }
+
+        // Retry button
+        document.getElementById('retry-btn').addEventListener('click', () => {
+            document.getElementById('error-message').classList.add('hidden');
+            document.querySelector('.bg-white.rounded-lg.shadow-lg').style.display = 'block';
+            
+            // Reset to camera tab
+            tabCamera.click();
+        });
+
+        // Manual entry (for testing)
+        document.getElementById('manual-submit').addEventListener('click', async () => {
+            const eventId = document.getElementById('manual-event-id').value.trim();
+            if (!eventId) {
+                alert('Please enter an event ID');
+                return;
+            }
+            
+            if (isScanning && html5QrCode) {
+                await html5QrCode.stop();
+                isScanning = false;
+            }
+            
+            await recordEventAttendance(eventId);
+        });
+
+        // Start scanner on page load
+        window.addEventListener('load', () => {
+            initScanner();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (isScanning && html5QrCode) {
+                html5QrCode.stop();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Reviews System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Review System Test Page</h1>
+        
+        <!-- Test General Review -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6">
+            <h2 class="text-xl font-bold mb-4">Test General Review</h2>
+            <button id="test-general" class="bg-blue-600 text-white px-4 py-2 rounded">
+                Create General Review
+            </button>
+            <div id="general-result" class="mt-4"></div>
+        </div>
+        
+        <!-- Test Event Review (Without QR) -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6">
+            <h2 class="text-xl font-bold mb-4">Test Event Review (Should Fail - No QR Scan)</h2>
+            <input type="text" id="event-id-fail" placeholder="event_12345678" class="border p-2 mr-2">
+            <button id="test-event-fail" class="bg-red-600 text-white px-4 py-2 rounded">
+                Try Event Review Without QR
+            </button>
+            <div id="event-fail-result" class="mt-4"></div>
+        </div>
+        
+        <!-- Scan QR Code -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6">
+            <h2 class="text-xl font-bold mb-4">Scan Event QR Code</h2>
+            <input type="text" id="event-id-scan" placeholder="event_12345678" class="border p-2 mr-2">
+            <button id="scan-qr" class="bg-green-600 text-white px-4 py-2 rounded">
+                Scan QR Code
+            </button>
+            <div id="scan-result" class="mt-4"></div>
+        </div>
+        
+        <!-- Test Event Review (With QR) -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6">
+            <h2 class="text-xl font-bold mb-4">Test Event Review (Should Succeed After QR Scan)</h2>
+            <input type="text" id="event-id-success" placeholder="event_12345678" class="border p-2 mr-2">
+            <button id="test-event-success" class="bg-green-600 text-white px-4 py-2 rounded">
+                Create Event Review
+            </button>
+            <div id="event-success-result" class="mt-4"></div>
+        </div>
+        
+        <!-- Get All Reviews -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6">
+            <h2 class="text-xl font-bold mb-4">Get My Reviews</h2>
+            <button id="get-reviews" class="bg-purple-600 text-white px-4 py-2 rounded">
+                Load My Reviews
+            </button>
+            <div id="reviews-result" class="mt-4"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test General Review
+        document.getElementById('test-general').addEventListener('click', async () => {
+            const result = document.getElementById('general-result');
+            result.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rating: 5,
+                        review_text: 'This is a test general review for PicMe website. Great service!',
+                        is_general_review: true
+                    })
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<pre class="bg-gray-100 p-4 rounded">${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                result.innerHTML = `<div class="text-red-600">Error: ${error.message}</div>`;
+            }
+        });
+        
+        // Test Event Review Without QR
+        document.getElementById('test-event-fail').addEventListener('click', async () => {
+            const eventId = document.getElementById('event-id-fail').value;
+            const result = document.getElementById('event-fail-result');
+            result.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rating: 4,
+                        review_text: 'This is a test event review without QR scan. Should fail!',
+                        event_id: eventId,
+                        is_general_review: false
+                    })
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<pre class="bg-gray-100 p-4 rounded">${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                result.innerHTML = `<div class="text-red-600">Error: ${error.message}</div>`;
+            }
+        });
+        
+        // Scan QR Code
+        document.getElementById('scan-qr').addEventListener('click', async () => {
+            const eventId = document.getElementById('event-id-scan').value;
+            const result = document.getElementById('scan-result');
+            result.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('/api/scan-event-qr', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        event_id: eventId
+                    })
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<pre class="bg-gray-100 p-4 rounded">${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                result.innerHTML = `<div class="text-red-600">Error: ${error.message}</div>`;
+            }
+        });
+        
+        // Test Event Review With QR
+        document.getElementById('test-event-success').addEventListener('click', async () => {
+            const eventId = document.getElementById('event-id-success').value;
+            const result = document.getElementById('event-success-result');
+            result.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rating: 5,
+                        review_text: 'This is a test event review after QR scan. Should succeed!',
+                        event_id: eventId,
+                        is_general_review: false
+                    })
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<pre class="bg-gray-100 p-4 rounded">${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                result.innerHTML = `<div class="text-red-600">Error: ${error.message}</div>`;
+            }
+        });
+        
+        // Get All Reviews
+        document.getElementById('get-reviews').addEventListener('click', async () => {
+            const result = document.getElementById('reviews-result');
+            result.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('/api/reviews/user');
+                const data = await response.json();
+                result.innerHTML = `<pre class="bg-gray-100 p-4 rounded overflow-auto max-h-96">${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                result.innerHTML = `<div class="text-red-600">Error: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>

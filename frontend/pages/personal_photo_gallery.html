@@ -17,15 +17,17 @@
                     <span class="text-xl font-bold text-indigo-600">PicMe</span>
                 </a>
                 <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="/homepage" class="text-gray-600 hover:text-indigo-600">Home</a>
-                    <a href="/event_discovery" class="text-gray-600 hover:text-indigo-600">Events</a>
-                    <a href="/personal_photo_gallery" class="text-indigo-600 font-medium">My Photos</a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/homepage" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Home</a>
+                    <a href="/event_discovery" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Events</a>
+                    <a href="/biometric_authentication_portal" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Scan Face</a>
+                    <a href="/personal_photo_gallery" class="text-gray-900 hover:text-indigo-600 transition-colors duration-200 font-medium">My Photos</a>
+                    <a href="/my_downloads" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">My Downloads</a>
                 </div>
                 <!-- User Authentication -->
                 <div class="flex items-center space-x-4">
                      <span class="text-gray-600 text-sm font-medium hidden md:block">Welcome, {{ session.get('user_email', 'Guest') }}</span>
-                    <a href="/logout" class="px-4 py-2 rounded-md text-sm font-medium text-red-600 border border-red-600 hover:bg-red-50">Logout</a>
+                    <a href="/logout" class="px-4 py-2 rounded-md text-sm font-medium text-red-600 border border-red-600 hover:bg-red-50 transition-colors duration-200">Logout</a>
                 </div>
             </div>
         </div>

@@ -27,3 +27,30 @@ CREATE TABLE downloads (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_user_downloads (user_id, downloaded_at)
 );
+
+CREATE TABLE reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
+    event_id VARCHAR(50) NULL,
+    is_general_review TINYINT(1) DEFAULT 1,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    review_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_rating (rating),
+    INDEX idx_created_at (created_at),
+    INDEX idx_event_id (event_id),
+    INDEX idx_is_general (is_general_review)
+);
+
+CREATE TABLE event_attendees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    event_id VARCHAR(50) NOT NULL,
+    scanned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_attendance (user_id, event_id),
+    INDEX idx_user_event (user_id, event_id)
+);
