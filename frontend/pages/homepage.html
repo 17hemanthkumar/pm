@@ -32,6 +32,7 @@
                     <a href="/biometric_authentication_portal" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Scan Face</a>
                     <a href="/personal_photo_gallery" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">My Photos</a>
                     <a href="/my_downloads" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">My Downloads</a>
+                    <a href="/my_reviews" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">My Reviews</a>
                 </div>
                 
                 <!-- User Authentication Buttons -->
@@ -99,9 +100,9 @@
                          class="w-full h-full object-cover transition-opacity duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 text-white">
-                        <p id="heroEventCategory" class="text-sm font-medium">Music Festival 2023</p>
-                        <h3 id="heroEventName" class="text-xl font-bold">Summer Beats</h3>
-                        <p id="heroEventPhotos" class="text-sm">1,245 photos available</p>
+                        <p id="heroEventCategory" class="text-sm font-medium"></p>
+                        <h3 id="heroEventName" class="text-xl font-bold"></h3>
+                        <p id="heroEventPhotos" class="text-sm"></p>
                     </div>
                 </div>
                 <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-indigo-100 rounded-full -z-10"></div>
@@ -171,6 +172,29 @@
 </section>
 
 
+    <!-- Reviews Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
+                <p class="text-lg text-gray-600">Hear from people who love using PicMe</p>
+            </div>
+            
+            <div id="reviews-container" class="grid md:grid-cols-3 gap-8 mb-8">
+                <!-- Reviews will be loaded here -->
+                <div class="col-span-3 text-center text-gray-500">
+                    Loading reviews...
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button id="write-review-btn" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">
+                    Write a Review
+                </button>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA Section -->
     <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div class="bg-indigo-600 rounded-2xl p-8 md:p-12 text-center text-white">
@@ -188,6 +212,54 @@
             </div>
         </div>
     </section>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-900">Write a Review</h3>
+                <button id="close-review-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="review-form">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                    <div class="flex space-x-2">
+                        <button type="button" class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="1">★</button>
+                        <button type="button" class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="2">★</button>
+                        <button type="button" class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="3">★</button>
+                        <button type="button" class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="4">★</button>
+                        <button type="button" class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="5">★</button>
+                    </div>
+                    <input type="hidden" id="rating-input" name="rating" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="review-text" class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
+                    <textarea id="review-text" name="review_text" rows="4" required minlength="10" maxlength="500"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                              placeholder="Share your experience with PicMe..."></textarea>
+                    <p class="text-xs text-gray-500 mt-1">Minimum 10 characters, maximum 500 characters</p>
+                </div>
+                
+                <div id="review-error" class="text-red-600 text-sm mb-4 hidden"></div>
+                <div id="review-success" class="text-green-600 text-sm mb-4 hidden"></div>
+                
+                <div class="flex space-x-3">
+                    <button type="submit" class="flex-1 bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        Submit Review
+                    </button>
+                    <button type="button" id="cancel-review" class="flex-1 bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
@@ -383,10 +455,186 @@
             }
         }
 
+        // Load top reviews
+        async function loadTopReviews() {
+            try {
+                const response = await fetch('/api/reviews?top=true');
+                const data = await response.json();
+                
+                const container = document.getElementById('reviews-container');
+                
+                if (!data.success || data.reviews.length === 0) {
+                    container.innerHTML = '<div class="col-span-3 text-center text-gray-500">No reviews yet. Be the first to share your experience!</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.reviews.map(review => `
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center mb-4">
+                            <div class="flex text-yellow-400">
+                                ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
+                            </div>
+                        </div>
+                        <p class="text-gray-700 mb-4">"${review.review_text}"</p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                ${review.user_name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-semibold text-gray-900">${review.user_name}</p>
+                                <p class="text-sm text-gray-500">${new Date(review.created_at).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviews-container').innerHTML = 
+                    '<div class="col-span-3 text-center text-gray-500">Failed to load reviews</div>';
+            }
+        }
+
+        // Review modal functionality
+        const reviewModal = document.getElementById('review-modal');
+        const writeReviewBtn = document.getElementById('write-review-btn');
+        const closeReviewModal = document.getElementById('close-review-modal');
+        const cancelReview = document.getElementById('cancel-review');
+        const reviewForm = document.getElementById('review-form');
+        const ratingInput = document.getElementById('rating-input');
+        const starBtns = document.querySelectorAll('.star-btn');
+        const reviewError = document.getElementById('review-error');
+        const reviewSuccess = document.getElementById('review-success');
+        
+        let selectedRating = 0;
+
+        // Star rating functionality
+        starBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                selectedRating = parseInt(btn.dataset.rating);
+                ratingInput.value = selectedRating;
+                
+                starBtns.forEach((star, index) => {
+                    if (index < selectedRating) {
+                        star.classList.remove('text-gray-300');
+                        star.classList.add('text-yellow-400');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+        });
+
+        // Open review modal
+        writeReviewBtn.addEventListener('click', async () => {
+            // Check if user is logged in
+            try {
+                const response = await fetch('/api/reviews/user');
+                const data = await response.json();
+                
+                if (response.status === 401) {
+                    alert('Please log in to write a review');
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                // Pre-fill if user has existing review
+                if (data.success && data.review) {
+                    selectedRating = data.review.rating;
+                    ratingInput.value = selectedRating;
+                    document.getElementById('review-text').value = data.review.review_text;
+                    
+                    starBtns.forEach((star, index) => {
+                        if (index < selectedRating) {
+                            star.classList.remove('text-gray-300');
+                            star.classList.add('text-yellow-400');
+                        }
+                    });
+                }
+                
+                reviewModal.classList.remove('hidden');
+            } catch (error) {
+                alert('Please log in to write a review');
+                window.location.href = '/login';
+            }
+        });
+
+        // Close modal
+        closeReviewModal.addEventListener('click', () => {
+            reviewModal.classList.add('hidden');
+            reviewForm.reset();
+            selectedRating = 0;
+            starBtns.forEach(star => {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-300');
+            });
+            reviewError.classList.add('hidden');
+            reviewSuccess.classList.add('hidden');
+        });
+
+        cancelReview.addEventListener('click', () => {
+            closeReviewModal.click();
+        });
+
+        // Submit review
+        reviewForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            reviewError.classList.add('hidden');
+            reviewSuccess.classList.add('hidden');
+            
+            if (!selectedRating) {
+                reviewError.textContent = 'Please select a rating';
+                reviewError.classList.remove('hidden');
+                return;
+            }
+            
+            const reviewText = document.getElementById('review-text').value.trim();
+            
+            if (reviewText.length < 10) {
+                reviewError.textContent = 'Review must be at least 10 characters long';
+                reviewError.classList.remove('hidden');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rating: selectedRating,
+                        review_text: reviewText
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    reviewSuccess.textContent = data.message;
+                    reviewSuccess.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        closeReviewModal.click();
+                        loadTopReviews(); // Reload reviews
+                    }, 1500);
+                } else {
+                    reviewError.textContent = data.error || 'Failed to submit review';
+                    reviewError.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                reviewError.textContent = 'Failed to submit review. Please try again.';
+                reviewError.classList.remove('hidden');
+            }
+        });
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadHeroEvents();
             loadFeaturedEvents();
+            loadTopReviews();
         });
 
         // Cleanup on page unload
