@@ -1,0 +1,4 @@
+# file: C:\xampp\htdocs\PicMecopy\backend\face_matching_config.py
+# hypothesis_version: 6.148.2
+
+[0.0, 0.45, 0.54, 0.7, 1.0, 800, ',', '0', '1', 'CRITICAL', 'DEBUG', 'ERROR', 'Expected 2 values', 'FACE_ENABLE_FALLBACK', 'FACE_LOG_LEVEL', 'FACE_MIN_CONFIDENCE', 'FACE_MIN_SIZE', 'INFO', 'WARNING', 'distance', 'false', 'hybrid', 'landmarks', 'no', 'off', 'on', 'true', 'x', 'yes']

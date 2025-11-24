@@ -1,0 +1,4 @@
+# file: C:\xampp\htdocs\PicMecopy\backend\matching_strategy.py
+# hypothesis_version: 6.148.2
+
+[0.0, 0.1, 0.4, 0.5, 0.6, 0.8, 1.0, 1.1, 1.2, 'alternative_matches', 'confidence', 'distance', 'hybrid', 'inf', 'landmarks', 'match_distance', 'person_id', 'quality_metrics', 'strategy_used', 'threshold_applied']
