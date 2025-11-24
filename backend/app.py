@@ -106,7 +106,7 @@ cache = Cache(app, config={
     'CACHE_THRESHOLD': 100  # Max 100 cached items
 })
 
-DB_CONFIG = {'host': 'localhost', 'user': 'root', 'password': '', 'database': 'picme_db'}
+DB_CONFIG = {'host': '127.0.0.1', 'user': 'root', 'password': '', 'database': 'picme_db', 'port': 3306}
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, '..', 'uploads')
 PROCESSED_FOLDER = os.path.join(BASE_DIR, '..', 'processed')
@@ -257,9 +257,12 @@ def process_images(event_id):
                 image = face_recognition.load_image_file(image_path)
                 face_encodings = face_recognition.face_encodings(image)
                 
+                print(f"--- [PROCESS] {filename}: Found {len(face_encodings)} faces ---")
+                
                 # Only log if faces found
                 if len(face_encodings) > 0:
                     person_ids_in_image = {model.learn_face(encoding) for encoding in face_encodings}
+                    print(f"--- [PROCESS] {filename}: Assigned to person IDs: {person_ids_in_image} ---")
 
                     for pid in person_ids_in_image:
                         person_dir = os.path.join(output_dir, pid)
@@ -279,9 +282,13 @@ def process_images(event_id):
                 
         model.save_model()
         print(f"--- [PROCESS] Completed event: {event_id} ({len(images_to_process)} images) ---")
+        
+        # Clear cache after processing so photos appear immediately
+        cache.clear()
     except Exception as e:
-        # Silent error handling
-        pass
+        # Log errors for debugging
+        print(f"--- [PROCESS ERROR] Event {event_id}: {e} ---")
+        traceback.print_exc()
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -652,8 +659,13 @@ def recognize_face():
         scanned_encoding = face_recognition.face_encodings(rgb_img, face_locations)[0]
         person_id = model.recognize_face(scanned_encoding)
         
+        print(f"--- [RECOGNIZE] Event: {event_id}, Person ID: {person_id} ---")
+        
         if person_id:
             person_dir = os.path.join(app.config['PROCESSED_FOLDER'], event_id, person_id)
+            print(f"--- [RECOGNIZE] Looking for photos in: {person_dir} ---")
+            print(f"--- [RECOGNIZE] Directory exists: {os.path.exists(person_dir)} ---")
+            
             if not os.path.exists(person_dir): 
                 return jsonify({"success": False, "error": "Match found, but no photos in this event."}), 404
             
@@ -904,7 +916,10 @@ def upload_event_photos(event_id):
         
         # Lazy load threading
         threading = get_threading()
-        threading.Thread(target=process_images, args=(event_id,)).start()
+        thread = threading.Thread(target=process_images, args=(event_id,))
+        thread.daemon = True  # Ensure thread doesn't block app shutdown
+        thread.start()
+        print(f"--- [UPLOAD] Started processing thread for event: {event_id} ---")
 
         # Update events data
         events_data = get_events_cached().copy()

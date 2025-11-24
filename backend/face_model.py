@@ -46,9 +46,11 @@ class FaceRecognitionModel:
         face_distances = face_recognition.face_distance(self.known_encodings, new_encoding)
         best_match_index = np.argmin(face_distances)
 
-        # A very strict tolerance to decide if this is an existing person
-        if face_distances[best_match_index] < 0.5:
+        # Balanced tolerance for learning to handle low-resolution photos
+        LEARNING_TOLERANCE = 0.65  # Set to 0.65 for balanced matching
+        if face_distances[best_match_index] < LEARNING_TOLERANCE:
             # This is an existing person
+            print(f"--- [ML MODEL] Matched existing person {self.known_ids[best_match_index]} with distance {face_distances[best_match_index]:.2f} ---")
             return self.known_ids[best_match_index]
         else:
             # This is a new person
@@ -69,13 +71,13 @@ class FaceRecognitionModel:
         face_distances = face_recognition.face_distance(self.known_encodings, scanned_encoding)
         best_match_index = np.argmin(face_distances)
 
-        # HIGH-ACCURACY THRESHOLD: Only a very close match is accepted.
-        STRICT_TOLERANCE = 0.54
+        # Balanced tolerance for recognition to handle low-resolution photos
+        RECOGNITION_TOLERANCE = 0.62  # Set to 0.65 for balanced matching
 
-        if face_distances[best_match_index] <= STRICT_TOLERANCE:
+        if face_distances[best_match_index] <= RECOGNITION_TOLERANCE:
             person_id = self.known_ids[best_match_index]
-            print(f"--- [ML MODEL] Confident match for {person_id} with distance {face_distances[best_match_index]:.2f} ---")
+            print(f"--- [ML MODEL] Confident match for {person_id} with distance {face_distances[best_match_index]:.2f} (Threshold: {RECOGNITION_TOLERANCE}) ---")
             return person_id
         else:
-            print(f"--- [ML MODEL] No confident match. Best distance was {face_distances[best_match_index]:.2f} (Threshold: {STRICT_TOLERANCE}) ---")
+            print(f"--- [ML MODEL] No confident match. Best distance was {face_distances[best_match_index]:.2f} (Threshold: {RECOGNITION_TOLERANCE}) ---")
             return None
